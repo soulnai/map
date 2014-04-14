@@ -28,12 +28,12 @@ $adapterConfigs = array(
     'google' => array(
         'client_id'     => '',
         'client_secret' => '',
-        'redirect_uri'  => 'http://localhost/auth?provider=google'
+        'redirect_uri'  => 'http://bbstudio.w.pw/test/?provider=google'
     ),
     'facebook' => array(
         'client_id'     => '',
         'client_secret' => '',
-        'redirect_uri'  => 'http://localhost/auth?provider=facebook'
+        'redirect_uri'  => 'http://bbstudio.w.pw/test/?provider=facebook'
     )
 );
 
@@ -122,6 +122,7 @@ if (isset($_GET['provider']) && array_key_exists($_GET['provider'], $adapters) &
 <?php
 if (isset($_SESSION['user'])) {
     echo '<p><a href="info.php">Перейти по ссылке</a></p>';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; URL=http://bbstudio.w.pw/test/info.php">';
 } else if (!isset($_GET['code']) && !isset($_SESSION['user'])) {
     foreach ($adapters as $title => $adapter) {
         echo '<p><a href="' . $adapter->getAuthUrl() . '">Аутентификация через ' . ucfirst($title) . '</a></p>';
