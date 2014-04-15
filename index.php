@@ -9,30 +9,14 @@ $adapterConfigs = array(
         'client_secret' => 'QSVF0ak5yG1SZVx2vZSp',
         'redirect_uri'  => 'http://bbstudio.w.pw/test/?provider=vk'
     ),
-    'odnoklassniki' => array(
-        'client_id'     => '',
-        'client_secret' => '',
-        'redirect_uri'  => 'http://localhost/auth?provider=odnoklassniki',
-        'public_key'    => 'CBADCBMKABABABABA'
-    ),
-    'mailru' => array(
-        'client_id'     => '',
-        'client_secret' => '',
-        'redirect_uri'  => 'http://localhost/auth/?provider=mailru'
-    ),
-    'yandex' => array(
-        'client_id'     => '',
-        'client_secret' => '',
-        'redirect_uri'  => 'http://localhost/auth/?provider=yandex'
-    ),
     'google' => array(
-        'client_id'     => '',
-        'client_secret' => '',
+        'client_id'     => '949458830781.apps.googleusercontent.com',
+        'client_secret' => '-R9O4UaGnjqZUz1DvNqj-Zcr',
         'redirect_uri'  => 'http://bbstudio.w.pw/test/?provider=google'
     ),
     'facebook' => array(
-        'client_id'     => '',
-        'client_secret' => '',
+        'client_id'     => '1440250126214851',
+        'client_secret' => '0b7003cd4b52b1a965ee001c5fd492c4',
         'redirect_uri'  => 'http://bbstudio.w.pw/test/?provider=facebook'
     )
 );
@@ -125,8 +109,10 @@ if (isset($_SESSION['user'])) {
 	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; URL=http://bbstudio.w.pw/test/info.php">';
 } else if (!isset($_GET['code']) && !isset($_SESSION['user'])) {
     foreach ($adapters as $title => $adapter) {
-        echo '<p><a href="' . $adapter->getAuthUrl() . '">Аутентификация через ' . ucfirst($title) . '</a></p>';
+       // echo '<p><a href="' . $adapter->getAuthUrl() . '">Аутентификация через ' . ucfirst($title) . '</a></p>';
     }
+    echo 'Войти с использованием: <a href="http://oauth.vk.com/authorize?client_id=4108869&scope=notify&redirect_uri=http://bbstudio.w.pw/test/?provider=vk&response_type=code"><img width=50px height=50px src="http://dedushka.org/img/upl/2013/04/25b2916b5c49db617f52fa5ea48efee7.jpg"></a> '
+    . '<a href="https://accounts.google.com/o/oauth2/auth?redirect_uri=http://bbstudio.w.pw/test/?provider=google&response_type=code&client_id=949458830781.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile"><img width=50px height=50px src="http://uxus.net/wp-content/uploads/2011/12/google-+1.jpg"></a> ';
 }
 ?>
 
@@ -134,8 +120,7 @@ if (isset($_SESSION['user'])) {
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 <script type="text/javascript" src="js/noty/packaged/jquery.noty.packaged.min.js"></script>
 
-<script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU"
-            type="text/javascript"></script>
+<script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
 
 <link href="css/bootstrap.min.css" rel="stylesheet" />
 <script src="js/bootstrap.min.js"></script>
@@ -148,12 +133,12 @@ if (isset($_SESSION['user'])) {
 
         function init () {
 
-		navigator.geolocation.getCurrentPosition(function(position) {
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;  
+		//navigator.geolocation.getCurrentPosition(function(position) {
+            //var latitude = position.coords.latitude;
+           // var longitude = position.coords.longitude;  
 			
 		     var myMap = new ymaps.Map("map", {
-                    center: [latitude,longitude], 
+                    center: [ymaps.geolocation.latitude,ymaps.geolocation.longitude], 
                     zoom: 13,
 					behaviors: ["default", "scrollZoom"]
                 }, {
@@ -167,7 +152,7 @@ if (isset($_SESSION['user'])) {
                 .add('typeSelector')                
                 .add('mapTools');
 
-       var myPlacemark = new ymaps.Placemark([latitude,longitude], {
+       var myPlacemark = new ymaps.Placemark([ymaps.geolocation.latitude,ymaps.geolocation.longitude], {
 					iconContent: "Вы здесь!",
                     }, {
                         preset: "twirl#redStretchyIcon"
@@ -198,10 +183,10 @@ if (isset($_SESSION['user'])) {
 		});	
 		
 		 myMap.events.add('click', function (e) {
-		var n = noty({text: 'Добавление меток станет доступно после <a href="join.php">регистрации.</a> '});
+		var n = noty({text: 'Добавление меток станет доступно после аутентификации.</a> '});
 		});
 		
-		});
+		//});
 		
         }
     </script>

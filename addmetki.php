@@ -54,7 +54,7 @@ $Date = htmlspecialchars($_POST['date']);
 $Time = htmlspecialchars($_POST['time']);
 $Author = htmlspecialchars($_POST['author']);
 
-$sql = "INSERT INTO ymapapiv2_markers (`id`, `iconText`, `hintText`, `balloonText`, `stylePlacemark`, `lat`, `lon`, `Date`, `Time`, `Author`, `Show`) VALUES (NULL, '$iconText', '$hintText', '$balloonText', '$stylePlacemark', '$lat', '$lon', STR_TO_DATE ('$Date', '%c/%e/%Y %r'), '$Time', '$Author', '1');";
+$sql = "INSERT INTO ymapapiv2_markers (`id`, `iconText`, `hintText`, `balloonText`, `stylePlacemark`, `lat`, `lon`, `GameDate`, `Time`, `Author`, `Show`) VALUES (NULL, '$iconText', '$hintText', '$balloonText', '$stylePlacemark', '$lat', '$lon', STR_TO_DATE ('$Date', '%c/%e/%Y %r'), '$Time', '$Author', '1');";
 
 $result = mysql_query($sql) or die("Ошибочный запрос: " . mysql_error());
 

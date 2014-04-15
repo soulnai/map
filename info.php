@@ -2,9 +2,6 @@
 <?php if (isset($_SESSION['user'])) 
     $user = $_SESSION['user'];  ?>
 
-
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
@@ -36,7 +33,7 @@
         function init () {
 
      var myMap = new ymaps.Map("map", {
-                    center: [46.481137,30.732318], 
+                    center: [ymaps.geolocation.latitude,ymaps.geolocation.longitude], 
                     zoom: 13,
 					behaviors: ["default", "scrollZoom"]
                 }, {
@@ -70,13 +67,13 @@
 				// Добавляем метку на карту
 				myMap.geoObjects.add(myPlacemark);
 				
-				var n = noty({
+			/*	var n = noty({
 								layout: 'bottomRight',
 					            text: json.markers[i].author +' хочет поиграть в '+ json.markers[i].icontext,
 								type        : 'alert',
 								dismissQueue: true,
 								timeout: '5000'
-					});
+					}); */
 
 			}
  
@@ -987,7 +984,7 @@ myGeocoder.then(
 						var hintText = $('input[name="hint_text"]').val();
 						var Date = $('input[name="date"]').val();
 						var Time = $('input[name="time"]').val();
-						var balloonText = '<b><?php echo $user->name ?> </b>предлагает поиграть в '+ $('input[name="icon_text"]').val() + '.<br><b>Когда:</b> '+ $('input[name="date"]').val()+'.<br><b>Где:</b>'+ $('input[name="hint_text"]').val()+'<br><b>Комментарий:</b>'+$('input[name="balloon_text"]').val();
+						var balloonText = '<b><?php echo $user->name ?> </b>предлагает поиграть в '+ $('input[name="icon_text"]').val() + '.<br><b>Когда:</b> '+ $('input[name="date"]').val()+'.<b>в</b> '+ $('input[name="time"]').val()+'.<br><b>Где:</b>'+ $('input[name="hint_text"]').val()+'<br><b>Комментарий:</b>'+$('input[name="balloon_text"]').val();
 						var Author = '<?php echo $user->name ?>';
 							var stylePlacemark = $('select[name=image] option:selected').val();	
 					
@@ -1033,39 +1030,44 @@ myGeocoder.then(
 </head>
 <body>
 <div>
-<div id="map" style="width: 70%; height: 900px; float: left;"></div>
+<div id="map" style="width: 70%; height: 770px; float: left;"></div>
 <div id="res"></div>
-<div style="float: right; width: 30%;">
+<div style="float: right; height: 250px; width: 30%;">
 <?php if (isset($_SESSION['user'])) {
     $user = $_SESSION['user'];
-    if (!is_null($user->socialId))
-    echo "Социальный ID пользователя: " . $user->socialId . '<br />';
+ //   if (!is_null($user->socialId))
+ //   echo "Социальный ID пользователя: " . $user->socialId . '<br />';
 
     if (!is_null($user->name))
     echo "Имя пользователя: " . $user->name . '<br />';
+ echo '<p><a href="logout.php">Выйти из системы</a></p>';
+  //  if (!is_null($user->email))
+  //  echo "Email: пользователя: " . $user->email . '<br />';
 
-    if (!is_null($user->email))
-    echo "Email: пользователя: " . $user->email . '<br />';
+  //  if (!is_null($user->socialPage))
+   // echo "Ссылка на профиль пользователя: " . $user->socialPage . '<br />';
 
-    if (!is_null($user->socialPage))
-    echo "Ссылка на профиль пользователя: " . $user->socialPage . '<br />';
+ //   if (!is_null($user->sex))
+  //  echo "Пол пользователя: " . $user->sex . '<br />';
 
-    if (!is_null($user->sex))
-    echo "Пол пользователя: " . $user->sex . '<br />';
-
-    if (!is_null($user->birthday))
-    echo "День Рождения: " . $user->birthday . '<br />';
+  //  if (!is_null($user->birthday))
+  //  echo "День Рождения: " . $user->birthday . '<br />';
 
     // аватар пользователя
     if (!is_null($user->avatar))
-    echo '<img src="' . $user->avatar . '" />'; echo "<br />";
-    echo '<p><a href="logout.php">Выйти из системы</a></p>';
+    echo '<img width=150px height=150px src="' . $user->avatar . '" />'; echo "<br />";
+   
 } else {
     echo '<p><a href="index.php">Войдите в систему</a> для того, чтобы увидеть данный материал.</p>';
 } ?>
+    
+    <a class="twitter-timeline" href="https://twitter.com/search?q=%23boardgames+%23%D0%BD%D0%B0%D1%81%D1%82%D0%BE%D0%BB%D0%BA%D0%B8" data-widget-id="456035188196143104">Tweets about "#boardgames #настолки"</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>
 </div>
 	
+
+
 
 
 
