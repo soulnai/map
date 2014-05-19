@@ -14,7 +14,7 @@
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script> 
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script type="text/javascript" src="js/noty/packaged/jquery.noty.packaged.min.js"></script>
-
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.1.47/jquery.form-validator.min.js"></script>
 <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU"
             type="text/javascript"></script>
             
@@ -95,7 +95,7 @@ myGeocoder.then(
 		  myMap.balloon.open(coords, {  
 						contentBody: '<div id="menu">\
                              <div id="menu_list">\
-                                <label>Название игры:</label> <input type="text" class="input-medium" name="icon_text" id="auto"/><br />\
+                                <label>Название игры:</label> <input type="text" class="input-medium" name="icon_text" id="auto" data-validation="required"/><br />\
                                  <label>День:</label> <input type="text" class="input-medium" name="date" id="datepicker"/><br />\
 								 <label>Время:</label> <input type="time" class="input-medium" name="time" id="time"/><br />\
 								 <label>Место:</label> <input type="text" class="input-medium" name="hint_text" value="'+name+'" /><br />\
@@ -953,7 +953,7 @@ myGeocoder.then(
 "Robber Knights",
 "Roma",
 "Samarkand",
-"Shogun Expansion - Tenno's Court",
+"Shogun Expansion - Tennos Court",
 "Адмирал",
 "Адмирал: Набор кораблей из 4-х шт для сборки",
 "Зоо Регата",
@@ -980,16 +980,17 @@ myGeocoder.then(
 				//Сохраняем данные из формы		
 				 $('#menu button[type="submit"]').click(function () {
 				
-                        var iconText = $('input[name="icon_text"]').val();
+                                                var iconText = $('input[name="icon_text"]').val();
 						var hintText = $('input[name="hint_text"]').val();
 						var Date = $('input[name="date"]').val();
 						var Time = $('input[name="time"]').val();
 						var balloonText = '<b><?php echo $user->name ?> </b>предлагает поиграть в '+ $('input[name="icon_text"]').val() + '.<br><b>Когда:</b> '+ $('input[name="date"]').val()+'.<b>в</b> '+ $('input[name="time"]').val()+'.<br><b>Где:</b>'+ $('input[name="hint_text"]').val()+'<br><b>Комментарий:</b>'+$('input[name="balloon_text"]').val();
 						var Author = '<?php echo $user->name ?>';
-							var stylePlacemark = $('select[name=image] option:selected').val();	
+						var stylePlacemark = $('select[name=image] option:selected').val();
+                                                var socialId = '<?php echo $user->socialId?>';
 					
 					//Передаем параметры метки скрипту addmetki.php для записи в базу данных
-					$("#res").load("addmetki.php", {icontext: iconText, hinttext : hintText, date : Date, author: Author, time : Time, balloontext : balloonText, styleplacemark : stylePlacemark, lat : coords[0].toPrecision(6), lon : coords[1].toPrecision(6)});
+					$("#res").load("addmetki.php", {icontext: iconText, hinttext : hintText, date : Date, author: Author, time : Time, balloontext : balloonText, styleplacemark : stylePlacemark, lat : coords[0].toPrecision(6), lon : coords[1].toPrecision(6), socialid : socialId});
 					
 					//Добавляем метку на карту		
 					myMap.geoObjects.add(myPlacemark);		
@@ -1020,7 +1021,67 @@ myGeocoder.then(
                 }
             });
         }
-		
+	
+        
+    $(document).ready(function() {
+    
+    $("#auto").validate({
+
+       rules:{
+
+            login:{
+                required: true,
+                minlength: 4,
+                maxlength: 16,
+            },
+
+            pswd:{
+                required: true,
+                minlength: 6,
+                maxlength: 16,
+            },
+       },
+
+       messages:{
+
+            login:{
+                required: "Это поле обязательно для заполнения",
+                minlength: "Логин должен быть минимум 4 символа",
+                maxlength: "Максимальное число символо - 16",
+            },
+
+            pswd:{
+                required: "Это поле обязательно для заполнения",
+                minlength: "Пароль должен быть минимум 6 символа",
+                maxlength: "Пароль должен быть максимум 16 символов",
+            },
+
+       }
+
+    });
+    
+    user = '<?php echo $user->socialId ?>';
+   
+    $.getJSON("vivodusergames.php", {user: user},
+		function(json){
+				for (i = 0; i < json.markers.length; i++) {
+
+					
+				$( "#user_points" ).append( "<p>"+json.markers[i].balloontext+"</p>" );
+			/*	var n = noty({
+								layout: 'bottomRight',
+					            text: json.markers[i].author +' хочет поиграть в '+ json.markers[i].icontext,
+								type        : 'alert',
+								dismissQueue: true,
+								timeout: '5000'
+					}); */
+
+			}
+ 
+		});
+    });    
+    
+    
     </script>
 
 	
@@ -1060,7 +1121,7 @@ myGeocoder.then(
 } else {
     echo '<p><a href="index.php">Войдите в систему</a> для того, чтобы увидеть данный материал.</p>';
 } ?>
-    
+   <div id="user_points"> 
     <a class="twitter-timeline" href="https://twitter.com/search?q=%23boardgames+%23%D0%BD%D0%B0%D1%81%D1%82%D0%BE%D0%BB%D0%BA%D0%B8" data-widget-id="456035188196143104">Tweets about "#boardgames #настолки"</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>

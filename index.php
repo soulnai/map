@@ -107,16 +107,18 @@ if (isset($_GET['provider']) && array_key_exists($_GET['provider'], $adapters) &
 if (isset($_SESSION['user'])) {
    // echo '<p><a href="info.php">Перейти по ссылке</a></p>';
 	//echo '<META HTTP-EQUIV="Refresh" CONTENT="0; URL=http://bbstudio.w.pw/test/info.php">';
-        echo '<div style="width: 100%; height:100%; overflow: hidden;"><iframe scrolling="no" style="position: absolute; width: 100%; height:100%; overflow: hidden;" src="info.php"></iframe></div>';
+        echo '<div style="width: 100%; height:100%; overflow: hidden;"><iframe scrolling="no" style="position: absolute; width: 100%; height:100%; overflow: hidden;" src="info.php"></iframe></div>'
+    . ' </div>';
 } else if (!isset($_GET['code']) && !isset($_SESSION['user'])) {
     foreach ($adapters as $title => $adapter) {
        // echo '<p><a href="' . $adapter->getAuthUrl() . '">Аутентификация через ' . ucfirst($title) . '</a></p>';
     }
-    echo 'Войти с использованием: <a href="http://oauth.vk.com/authorize?client_id=4108869&scope=notify&redirect_uri=http://bbstudio.w.pw/test/?provider=vk&response_type=code"><img width=50px height=50px src="http://dedushka.org/img/upl/2013/04/25b2916b5c49db617f52fa5ea48efee7.jpg"></a> '
-    . '<a href="https://accounts.google.com/o/oauth2/auth?redirect_uri=http://bbstudio.w.pw/test/?provider=google&response_type=code&client_id=949458830781.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile"><img width=50px height=50px src="http://uxus.net/wp-content/uploads/2011/12/google-+1.jpg"></a> ';
+    echo '<div style="float: right;">Войти с использованием: <a href="http://oauth.vk.com/authorize?client_id=4108869&scope=notify&redirect_uri=http://bbstudio.w.pw/test/?provider=vk&response_type=code"><img width=50px height=50px src="http://dedushka.org/img/upl/2013/04/25b2916b5c49db617f52fa5ea48efee7.jpg"></a> '
+    . '<a href="https://accounts.google.com/o/oauth2/auth?redirect_uri=http://bbstudio.w.pw/test/?provider=google&response_type=code&client_id=949458830781.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile"><img width=50px height=50px src="http://uxus.net/wp-content/uploads/2011/12/google-+1.jpg"></a> </div>';
     
-    echo '<div id="map" style="width: 1000px; height: 900px"></div>
-		<div id="res"></div>';
+    echo '<div id="map" style="width: 1000px; height: 900px; margin-left: auto;  margin-right: auto;"></div>
+		<div id="res"></div>
+                <div id="user_points"></div>';
     }
 ?>
 
@@ -129,11 +131,13 @@ if (isset($_SESSION['user'])) {
 <link href="css/bootstrap.min.css" rel="stylesheet" />
 <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
+         
+        
         
         ymaps.ready(init);
 
 		//Определение начальных параметров карты
-
+                
 
         function init () {
 
@@ -181,9 +185,10 @@ if (isset($_SESSION['user'])) {
 
 				// Добавляем метку на карту
 				myMap.geoObjects.add(myPlacemark);
-
+                               
+                                
 			}
-
+                   
 		});	
 		
 		 myMap.events.add('click', function (e) {
