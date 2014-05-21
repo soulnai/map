@@ -1,6 +1,10 @@
 <?php require_once 'config.inc.php'; ?>
-<?php if (isset($_SESSION['user'])) 
-    $user = $_SESSION['user'];  ?>
+<?php if (isset($_SESSION['user'])) {
+    $user = $_SESSION['user'];  
+ } else {
+     header('Location: index.php');
+ }
+?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -14,7 +18,7 @@
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script> 
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script type="text/javascript" src="js/noty/packaged/jquery.noty.packaged.min.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.1.47/jquery.form-validator.min.js"></script>
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.12.0/jquery.validate.js"></script>
 <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU"
             type="text/javascript"></script>
             
@@ -55,10 +59,10 @@
 
 					var myPlacemark = new ymaps.Placemark([json.markers[i].lat,json.markers[i].lon], {
                     // Свойства
-                    iconContent: json.markers[i].icontext, 
-					hintContent: json.markers[i].hinttext,
+                    iconContent: json.markers[i].icontext.substring(0, 20)+'...', 
+                    hintContent: json.markers[i].icontext,
                     balloonContentBody: json.markers[i].balloontext,   
-					author: json.markers[i].author				
+                    author: json.markers[i].author				
 					}, {
                     // Опции
                     preset: json.markers[i].styleplacemark					
@@ -94,12 +98,12 @@ myGeocoder.then(
 		
 		  myMap.balloon.open(coords, {  
 						contentBody: '<div id="menu">\
-                             <div id="menu_list">\
-                                <label>Название игры:</label> <input type="text" class="input-medium" name="icon_text" id="auto" data-validation="required"/><br />\
-                                 <label>День:</label> <input type="text" class="input-medium" name="date" id="datepicker"/><br />\
-								 <label>Время:</label> <input type="time" class="input-medium" name="time" id="time"/><br />\
-								 <label>Место:</label> <input type="text" class="input-medium" name="hint_text" value="'+name+'" /><br />\
-                                 <label>Комментарий:</label> <input type="text" class="input-medium" name="balloon_text" /><br />\
+                             <div id="menu_list"><form id="autoform">\
+                                <label>Название игры:</label> <input type="text" class="input-medium" name="icon_text" id="auto" minlength="2" required/><br />\
+                                 <label>День:</label> <input type="text" class="input-medium" name="date" id="datepicker" minlength="2" required/><br />\
+								 <label>Время:</label> <input type="time" class="input-medium" name="time" id="time" minlength="2" required/><br />\
+								 <label>Место:</label> <input type="text" class="input-medium" name="hint_text" value="'+name+'" minlength="2" required/><br />\
+                                 <label>Комментарий:</label> <input type="text" class="input-medium" name="balloon_text"/><br />\
 								 <div class="control-group"><label>Значок метки:</label>\
 								 <div class="input-prepend"><span class="add-on"><img src="http://api.yandex.ru/maps/doc/jsapi/2.x/ref/images/styles/greenstr.png" style="height: 20px" /></span>\
 								 <select name="image" id="image" class="span2" >\
@@ -107,8 +111,9 @@ myGeocoder.then(
 <option data-path="http://api.yandex.ru/maps/doc/jsapi/2.x/ref/images/styles/redstr.png" value="twirl#redStretchyIcon">Хочу поиграть</option>\
 </select></div>\
                              </div></div>\
-                         <button type="submit" class="btn btn-success">Сохранить</button>\
-                         </div>'});
+                         <button type="submit" class="btn btn-success" id="point_submit" >Сохранить</button></form>\
+                         </div>'
+                                                                 });
 		
 
 					$(function() {
@@ -976,10 +981,16 @@ myGeocoder.then(
 				$('#image').change(function(){
 					$('.add-on').find('img:first').attr('src', $('#image option:selected').attr('data-path'));
 				});		 
-					
+				
+                                   $('#autoform :input').change(function (){
+                                                     $("#autoform").validate();
+                                                    //$( '#point_submit' ).prop({disabled: false});
+                                                    });
 				//Сохраняем данные из формы		
 				 $('#menu button[type="submit"]').click(function () {
-				
+                                              $("#autoform").validate();
+                                              var $form = $("#autoform");
+                                             
                                                 var iconText = $('input[name="icon_text"]').val();
 						var hintText = $('input[name="hint_text"]').val();
 						var Date = $('input[name="date"]').val();
@@ -990,16 +1001,16 @@ myGeocoder.then(
                                                 var socialId = '<?php echo $user->socialId?>';
 					
 					//Передаем параметры метки скрипту addmetki.php для записи в базу данных
-					$("#res").load("addmetki.php", {icontext: iconText, hinttext : hintText, date : Date, author: Author, time : Time, balloontext : balloonText, styleplacemark : stylePlacemark, lat : coords[0].toPrecision(6), lon : coords[1].toPrecision(6), socialid : socialId});
-					
-					//Добавляем метку на карту		
+                                         if ($form.valid()) {
+                                             $("#res").load("addmetki.php", {icontext: iconText, hinttext : hintText, date : Date, author: Author, time : Time, balloontext : balloonText, styleplacemark : stylePlacemark, lat : coords[0].toPrecision(6), lon : coords[1].toPrecision(6), socialid : socialId});
+                                             //Добавляем метку на карту		
 					myMap.geoObjects.add(myPlacemark);		
 										
 					//Изменяем свойства метки и балуна
-					myPlacemark.properties.set({
-                            iconContent: iconText,
+			myPlacemark.properties.set({
+                            iconContent: iconText.substring(0, 20),
                             hintContent: hintText,
-							balloonContent: balloonText							
+                            balloonContent: balloonText							
                         });
 						
 						//Устанавливаем стиль значка метки
@@ -1009,6 +1020,18 @@ myGeocoder.then(
 						
                         //Закрываем балун
                         myMap.balloon.close();
+                                         } else {
+                                            var n = noty({
+								layout: 'bottomRight',
+                                                                text: 'Заполните все поля, пожалуйста.',
+								type        : 'alert',
+								dismissQueue: true,
+								timeout: '5000'
+					});
+                                         }
+					
+					
+					
 						
 						
                     });		 
@@ -1025,40 +1048,6 @@ myGeocoder.then(
         
     $(document).ready(function() {
     
-    $("#auto").validate({
-
-       rules:{
-
-            login:{
-                required: true,
-                minlength: 4,
-                maxlength: 16,
-            },
-
-            pswd:{
-                required: true,
-                minlength: 6,
-                maxlength: 16,
-            },
-       },
-
-       messages:{
-
-            login:{
-                required: "Это поле обязательно для заполнения",
-                minlength: "Логин должен быть минимум 4 символа",
-                maxlength: "Максимальное число символо - 16",
-            },
-
-            pswd:{
-                required: "Это поле обязательно для заполнения",
-                minlength: "Пароль должен быть минимум 6 символа",
-                maxlength: "Пароль должен быть максимум 16 символов",
-            },
-
-       }
-
-    });
     
     user = '<?php echo $user->socialId ?>';
    

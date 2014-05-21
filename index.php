@@ -101,14 +101,13 @@ if (isset($_GET['provider']) && array_key_exists($_GET['provider'], $adapters) &
    	<meta http-equiv="Content-Type" content="application/javascript; charset=UTF-8" />
     <title></title>
 </head>
-<body style="width: 100%; height:100%; overflow: hidden;">
+<body style="width: 100%; height:100%;">
 
 <?php
 if (isset($_SESSION['user'])) {
    // echo '<p><a href="info.php">Перейти по ссылке</a></p>';
-	//echo '<META HTTP-EQUIV="Refresh" CONTENT="0; URL=http://bbstudio.w.pw/test/info.php">';
-        echo '<div style="width: 100%; height:100%; overflow: hidden;"><iframe scrolling="no" style="position: absolute; width: 100%; height:100%; overflow: hidden;" src="info.php"></iframe></div>'
-    . ' </div>';
+	echo '<META HTTP-EQUIV="Refresh" CONTENT="0; URL=http://bbstudio.w.pw/test/info.php">';
+        //echo '<div style="width: 100%; height:100%; overflow: hidden;"><iframe scrolling="no" style="position: absolute; width: 100%; height:100%; overflow: hidden;" src="info.php"></iframe></div>'. ' </div>';
 } else if (!isset($_GET['code']) && !isset($_SESSION['user'])) {
     foreach ($adapters as $title => $adapter) {
        // echo '<p><a href="' . $adapter->getAuthUrl() . '">Аутентификация через ' . ucfirst($title) . '</a></p>';
