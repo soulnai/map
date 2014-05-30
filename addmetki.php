@@ -55,7 +55,11 @@ $Time = htmlspecialchars($_POST['time']);
 $Author = htmlspecialchars($_POST['author']);
 $socialid = $_POST['socialid'];
 
-$sql = "INSERT INTO ymapapiv2_markers (`id`, `iconText`, `hintText`, `balloonText`, `stylePlacemark`, `lat`, `lon`, `GameDate`, `Time`, `Author`, `Show`, `socialid`) VALUES (NULL, '$iconText', '$hintText', '$balloonText', '$stylePlacemark', '$lat', '$lon', STR_TO_DATE ('$Date', '%c/%e/%Y %r'), '$Time', '$Author', '1', '$socialid');";
+
+if ((!empty($iconText)) && (!empty($hintText)) &&   (!empty($Date))    &&   (!empty($Time))  &&   (!empty($Author)) &&   (!empty($socialid))  )
+{
+    $sql = "INSERT INTO ymapapiv2_markers (`id`, `iconText`, `hintText`, `balloonText`, `stylePlacemark`, `lat`, `lon`, `GameDate`, `Time`, `Author`, `Show`, `socialid`) VALUES (NULL, '$iconText', '$hintText', '$balloonText', '$stylePlacemark', '$lat', '$lon', STR_TO_DATE ('$Date', '%c/%e/%Y %r'), '$Time', '$Author', '1', '$socialid');";
+}
 
 $result = mysql_query($sql) or die("Ошибочный запрос: " . mysql_error());
 
