@@ -12,7 +12,7 @@ if(mysql_num_rows($result)>0)
 {
 while ($mar = mysql_fetch_array($result))
 {
-$json =  array(icontext=>$mar['iconText'], hinttext=>$mar['hintText'], balloontext=>$mar['balloonText'], styleplacemark=>$mar['stylePlacemark'], lat=>$mar['lat'], lon=>$mar['lon'], author=>$mar['Author'], id=>$mar['id']);
+$json =  array(icontext=>$mar['iconText'], hinttext=>$mar['hintText'], balloontext=>$mar['balloonText'], styleplacemark=>$mar['stylePlacemark'], lat=>$mar['lat'], lon=>$mar['lon'], author=>$mar['Author'], id=>$mar['id'], gamedate=>$mar['GameDate'], gametime=>$mar['Time'], gameid=>$mar['id']);
 $markers[] = $json;
 }
  

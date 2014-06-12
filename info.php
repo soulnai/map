@@ -14,29 +14,31 @@
     <title></title>
 	
 	
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"></link>
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script> 
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script type="text/javascript" src="js/noty/packaged/jquery.noty.packaged.min.js"></script>
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.12.0/jquery.validate.js"></script>
-<script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU"
-            type="text/javascript"></script>
-            
-
+<script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru_UA" type="text/javascript"></script>
+<script type="text/javascript" src="js/jquery.plugin.js"></script>  
+<script type="text/javascript" src="js/jquery.timeentry.js"></script> 
+<link href="css/jquery.timeentry.css" rel="stylesheet" />
 <link href="css/bootstrap.min.css" rel="stylesheet" />
 
 <script src="js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
-        
+  
         ymaps.ready(init);
 
 		//Определение начальных параметров карты
-
+                
+                
+          
 
         function init () {
-
-     var myMap = new ymaps.Map("map", {
+$('#map').empty();
+     myMap = new ymaps.Map("map", {
                     center: [ymaps.geolocation.latitude,ymaps.geolocation.longitude], 
                     zoom: 13,
 					behaviors: ["default", "scrollZoom"]
@@ -49,39 +51,68 @@
                 .add('zoomControl')                
                 .add('typeSelector')                
                 .add('mapTools');
-
-       
-				
+        
+        //Коллекция для хранения меток      
+       myCollection = new ymaps.GeoObjectCollection();
+        clusterer = new ymaps.Clusterer({preset: 'twirl#redClusterIcons', gridSize : 32});			
 			//Запрос данных и вывод маркеров на карту + ПОЯВЛЕНИЕ ВСПЛЫВАЮЩИХ МЕТОК
-		$.getJSON("vivodpointsmap.php",
-		function(json){
+		
+               
+             renew = function () { 
+               
+        $.ajax({url: "vivodpointsmap.php",
+            dataType : "json", 
+		success: function(json){
+                   
 				for (i = 0; i < json.markers.length; i++) {
 
 					var myPlacemark = new ymaps.Placemark([json.markers[i].lat,json.markers[i].lon], {
                     // Свойства
                     iconContent: json.markers[i].icontext.substring(0, 20)+'...', 
                     hintContent: json.markers[i].icontext,
-                    balloonContentBody: json.markers[i].balloontext,   
+                    balloonContentBody: json.markers[i].balloontext+'<br><button type="submit" class="btn btn-success" id="subscribe" aut="'+json.markers[i].author+'" game="'+json.markers[i].id+'">Сыграть</button>',   
                     author: json.markers[i].author				
 					}, {
                     // Опции
                     preset: json.markers[i].styleplacemark					
                 });
-
+                                // Добавляем метку в коллекцию
+                                myCollection.add(myPlacemark);
+                                clusterer.add(myPlacemark);
 				// Добавляем метку на карту
-				myMap.geoObjects.add(myPlacemark);
+				//myMap.geoObjects.add(myPlacemark);
 				
-			/*	var n = noty({
-								layout: 'bottomRight',
-					            text: json.markers[i].author +' хочет поиграть в '+ json.markers[i].icontext,
-								type        : 'alert',
+			};
+  
+		},
+                error: function(){
+                   var n = noty({
+								layout: 'top',
+                                                                text: 'Что-то случилось.',
+								type        : 'error',
 								dismissQueue: true,
 								timeout: '5000'
-					}); */
+					});
+				
+  
+		}
+            });
+             };        
+        renew ();         
+       // myMap.geoObjects.add(myCollection);    
+       myMap.geoObjects.add(clusterer);
+           
+                
+    setInterval(function(){ 
+        
+        clusterer.removeAll();
+           //  myCollection.removeAll();        
+        renew (); 
+         myMap.geoObjects.add(clusterer);                
+       // myMap.geoObjects.add(myCollection);                
+           
+            }, 60000);
 
-			}
- 
-		});	
 				
 			//Отслеживаем событие клик левой кнопкой мыши на карте
             myMap.events.add('click', function (e) {
@@ -101,7 +132,7 @@ myGeocoder.then(
                              <div id="menu_list"><form id="autoform">\
                                 <label>Название игры:</label> <input type="text" class="input-medium" name="icon_text" id="auto" minlength="2" required/><br />\
                                  <label>День:</label> <input type="text" class="input-medium" name="date" id="datepicker" minlength="2" required/><br />\
-								 <label>Время:</label> <input type="time" class="input-medium" name="time" id="time" minlength="2" required/><br />\
+								 <label>Время:</label> <input type="text" class="input-medium" name="time" id="time" minlength="2" value="17:00" required/><br />\
 								 <label>Место:</label> <input type="text" class="input-medium" name="hint_text" value="'+name+'" minlength="2" required/><br />\
                                  <label>Комментарий:</label> <input type="text" class="input-medium" name="balloon_text"/><br />\
 								 <div class="control-group"><label>Значок метки:</label>\
@@ -973,7 +1004,7 @@ myGeocoder.then(
     });
   });
 							
-                  
+                                        $('input[name="time"]').timeEntry({show24Hours: true});
 					$( "#datepicker" ).datepicker({ minDate: -0, maxDate: "+1M" });
 				var myPlacemark = new ymaps.Placemark(coords);
 				 
@@ -1005,7 +1036,8 @@ myGeocoder.then(
                                              $("#res").load("addmetki.php", {icontext: iconText, hinttext : hintText, date : Date, author: Author, time : Time, balloontext : balloonText, styleplacemark : stylePlacemark, lat : coords[0].toPrecision(6), lon : coords[1].toPrecision(6), socialid : socialId});
                                              //Добавляем метку на карту		
 					myMap.geoObjects.add(myPlacemark);		
-										
+					//myCollection.add(myPlacemark);					
+                                        clusterer.add(myPlacemark);
 					//Изменяем свойства метки и балуна
 			myPlacemark.properties.set({
                             iconContent: iconText.substring(0, 20),
@@ -1022,15 +1054,33 @@ myGeocoder.then(
                         myMap.balloon.close();
                                          } else {
                                             var n = noty({
-								layout: 'bottomRight',
+								layout: 'top',
                                                                 text: 'Заполните все поля, пожалуйста.',
-								type        : 'alert',
+								type        : 'error',
 								dismissQueue: true,
 								timeout: '5000'
 					});
                                          }
+                                $('#user_points').html('<img src="img\spinner_big.gif"></img>');         
+                                         
+				$('#user_points').empty();	
+				$.getJSON("vivodusergames.php", {user: user},
+		function(json){
+				for (i = 0; i < json.markers.length; i++) {
+
 					
-					
+				$( "#user_points" ).append("<div id='mygames' style='height: 35px'>"+ json.markers[i].author+" предлагает поиграть в "+json.markers[i].icontext+" в "+json.markers[i].gametime+" "+json.markers[i].gamedate+" <button type='button' class='btn btn-danger btn-sm' id='delete' data-id='"+json.markers[i].gameid+"' style='float: right; ' >delete</button></div>" );
+			/*	var n = noty({
+								layout: 'bottomRight',
+					            text: json.markers[i].author +' хочет поиграть в '+ json.markers[i].icontext,
+								type        : 'alert',
+								dismissQueue: true,
+								timeout: '5000'
+					}); */
+
+			}
+ 
+		});	
 					
 						
 						
@@ -1043,33 +1093,117 @@ myGeocoder.then(
                     myMap.balloon.close();
                 }
             });
-        }
-	
         
+        };
+	
+  
     $(document).ready(function() {
-    
-    
+   
+   
     user = '<?php echo $user->socialId ?>';
    
-    $.getJSON("vivodusergames.php", {user: user},
+   $(document).on('click', '#subscribe', function(e) { 
+       e.preventDefault();
+ var $btn2 = this;  
+ alert($(this).attr('id'));     
+alert('Подписаны на игру '+$(this).attr('game')+' у мастера '+$(this).attr('aut'));
+});
+   
+   
+   $.ajax({url: "vivodusergames.php",
+       type: "GET",
+            dataType : "json", 
+            data: {user: user},
+		success: function(json){
+                 for (i = 0; i < json.markers.length; i++) {
+
+					
+				$( "#user_points" ).append("<div id='mygames' style='height: 35px'>"+ json.markers[i].author+" предлагает поиграть в "+json.markers[i].icontext+" в "+json.markers[i].gametime+" "+json.markers[i].gamedate+" <button type='button' class='btn btn-danger btn-sm' id='delete' data-id='"+json.markers[i].gameid+"' style='float: right; ' >delete</button></div>" );
+                            };  
+				
+  
+		},
+                error: function(){
+                   noty({
+								layout: 'top',
+                                                                text: 'Что-то случилось.',
+								type        : 'error',
+								dismissQueue: true,
+								timeout: '5000'
+					});
+				
+  
+		}
+            });
+   
+   
+   /* $.getJSON("vivodusergames.php", {user: user},
 		function(json){
 				for (i = 0; i < json.markers.length; i++) {
 
 					
-				$( "#user_points" ).append( "<p>"+json.markers[i].balloontext+"</p>" );
+				$( "#user_points" ).append("<div id='mygames' style='height: 35px'>"+ json.markers[i].author+" предлагает поиграть в "+json.markers[i].icontext+" в "+json.markers[i].gametime+" "+json.markers[i].gamedate+" <button type='button' class='btn btn-danger btn-sm' id='delete' data-id='"+json.markers[i].gameid+"' style='float: right; ' >delete</button></div>" );
 			/*	var n = noty({
 								layout: 'bottomRight',
 					            text: json.markers[i].author +' хочет поиграть в '+ json.markers[i].icontext,
 								type        : 'alert',
 								dismissQueue: true,
 								timeout: '5000'
-					}); */
+					}); 
 
 			}
  
+		}); */
+       $(document).on('click', '#delete', function(e) {
+    e.preventDefault();
+    var $btn = this;
+   
+        
+        noty({
+  text: 'Do you want to continue?',
+  layout: 'center',
+  buttons: [
+    {addClass: 'btn btn-primary', text: 'Ok', onClick: function($noty) {
+
+        // this = button element
+        // $noty = $noty element
+
+        $noty.close();
+        
+        
+        $($btn).closest('div').remove(); 
+    
+   
+   
+    $.getJSON("removeusergame.php", {id: $($btn).data('id')},
+		function(){
+				
+ 
 		});
+      // myCollection.removeAll();        
+       clusterer.removeAll();        
+        renew (); 
+        myMap.geoObjects.add(clusterer); 
+        //myMap.geoObjects.add(myCollection); 
+      //  noty({text: 'You clicked "Ok" button', type: 'success'});
+      }
+    },
+    {addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+        $noty.close();
+       // noty({text: 'You clicked "Cancel" button', type: 'error'});
+      }
+    }
+  ]
+});
+    
+           
+
+});
+
+
     });    
     
+
     
     </script>
 
@@ -1080,7 +1214,7 @@ myGeocoder.then(
 </head>
 <body>
 <div>
-<div id="map" style="width: 70%; height: 770px; float: left;"></div>
+    <div id="map" style="width: 70%; height: 770px; float: left;"><img style="margin-left: auto;  margin-right: auto;" src="img\spinner_big.gif"></img></div>
 <div id="res"></div>
 <div style="float: right; height: 250px; width: 30%;">
 <?php if (isset($_SESSION['user'])) {
@@ -1110,15 +1244,14 @@ myGeocoder.then(
 } else {
     echo '<p><a href="index.php">Войдите в систему</a> для того, чтобы увидеть данный материал.</p>';
 } ?>
-   <div id="user_points"> 
+    
     <a class="twitter-timeline" href="https://twitter.com/search?q=%23boardgames+%23%D0%BD%D0%B0%D1%81%D1%82%D0%BE%D0%BB%D0%BA%D0%B8" data-widget-id="456035188196143104">Tweets about "#boardgames #настолки"</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>
 </div>
+
+<div id="user_points" style="float: left; width: 50%"> </div>
+
 	
-
-
-
-
 </body>
 </html>
