@@ -19,17 +19,10 @@
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script type="text/javascript" src="js/noty/packaged/jquery.noty.packaged.min.js"></script>
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.12.0/jquery.validate.js"></script>
-<<<<<<< HEAD
 <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru_UA" type="text/javascript"></script>
 <script type="text/javascript" src="js/jquery.plugin.js"></script>  
 <script type="text/javascript" src="js/jquery.timeentry.js"></script> 
 <link href="css/jquery.timeentry.css" rel="stylesheet" />
-=======
-<script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru_UA"
-            type="text/javascript"></script>
-            
-
->>>>>>> ae7278c668c295e4ffe01713947da825e1c36d1e
 <link href="css/bootstrap.min.css" rel="stylesheet" />
 
 <script src="js/bootstrap.min.js"></script>
@@ -61,11 +54,7 @@ $('#map').empty();
         
         //Коллекция для хранения меток      
        myCollection = new ymaps.GeoObjectCollection();
-<<<<<<< HEAD
         clusterer = new ymaps.Clusterer({preset: 'twirl#redClusterIcons', gridSize : 32});			
-=======
-				
->>>>>>> ae7278c668c295e4ffe01713947da825e1c36d1e
 			//Запрос данных и вывод маркеров на карту + ПОЯВЛЕНИЕ ВСПЛЫВАЮЩИХ МЕТОК
 		
                
@@ -89,10 +78,7 @@ $('#map').empty();
                 });
                                 // Добавляем метку в коллекцию
                                 myCollection.add(myPlacemark);
-<<<<<<< HEAD
                                 clusterer.add(myPlacemark);
-=======
->>>>>>> ae7278c668c295e4ffe01713947da825e1c36d1e
 				// Добавляем метку на карту
 				//myMap.geoObjects.add(myPlacemark);
 				
@@ -1112,11 +1098,7 @@ myGeocoder.then(
 	
   
     $(document).ready(function() {
-<<<<<<< HEAD
    
-=======
-    
->>>>>>> ae7278c668c295e4ffe01713947da825e1c36d1e
    
     user = '<?php echo $user->socialId ?>';
    
@@ -1198,43 +1180,11 @@ alert('Подписаны на игру '+$(this).attr('game')+' у мастер
 				
  
 		});
-<<<<<<< HEAD
       // myCollection.removeAll();        
        clusterer.removeAll();        
         renew (); 
         myMap.geoObjects.add(clusterer); 
         //myMap.geoObjects.add(myCollection); 
-=======
-       $(document).on('click', '#delete', function(e) {
-    e.preventDefault();
-    var $btn = this;
-   
-        
-        noty({
-  text: 'Do you want to continue?',
-  layout: 'center',
-  buttons: [
-    {addClass: 'btn btn-primary', text: 'Ok', onClick: function($noty) {
-
-        // this = button element
-        // $noty = $noty element
-
-        $noty.close();
-        
-        
-        $($btn).closest('div').remove(); 
-    
-   
-   
-    $.getJSON("removeusergame.php", {id: $($btn).data('id')},
-		function(){
-				
- 
-		});
-                
-        $('#map').empty();        
-        ymaps.ready(init); 
->>>>>>> ae7278c668c295e4ffe01713947da825e1c36d1e
       //  noty({text: 'You clicked "Ok" button', type: 'success'});
       }
     },
@@ -1249,11 +1199,8 @@ alert('Подписаны на игру '+$(this).attr('game')+' у мастер
            
 
 });
-<<<<<<< HEAD
 
 
-=======
->>>>>>> ae7278c668c295e4ffe01713947da825e1c36d1e
     });    
     
 
@@ -1302,12 +1249,6 @@ alert('Подписаны на игру '+$(this).attr('game')+' у мастер
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>
 </div>
-<<<<<<< HEAD
-=======
-	
-<div id="user_points" style="float: left; width: 50%"> </div>
-
->>>>>>> ae7278c668c295e4ffe01713947da825e1c36d1e
 
 <div id="user_points" style="float: left; width: 50%"> </div>
 
